@@ -6,7 +6,10 @@ from lib.auto_pyppeteer_utils import (
     goto_page_with_url_containing,
     set_auto_download_behavior,
     click_selector,
+    pp_clear_input_field,
+    pp_copy_paste,
 )
+from lib.browser_controller import BrowserController
 from lib.text_utils import append_text_to_file, is_valid_email
 from asyncio import sleep
 import os
@@ -28,6 +31,7 @@ class AutoVbee:
         self.dm.create_button("Sign Up", self.sign_up_vbee, self.load_data)
 
         self.gc = GologinController(self.dm.get_data("gologin_token"))
+        self.bc = BrowserController(self.dm.get_data("executable_path"))
 
     def load_data(self):
         self.desc_path = self.dm.get_data("desc_path")
@@ -35,9 +39,10 @@ class AutoVbee:
         self.pass_vbee = "1aaaaaa1"
 
     async def sign_up_vbee(self):
+        # Create profile
         await self.gc.delete_all()
-        await self.gc.clone(self.profiles_folder_path)
-        self.browser = await self.gc.connect()
+        new_profile_path = await self.gc.clone(self.profiles_folder_path)
+        self.browser = await self.bc.initialize_browser(new_profile_path)
 
         await self.load_temp_mail_page()
 
@@ -183,6 +188,31 @@ class AutoVbee:
         await speed_input.type("1.1")
         await self.page.keyboard.press("Enter")
         await sleep(0.5)
+
+    async def paste_text_into_title(self, text, number):
+        title_input = await self.page.waitForSelector(".input-wrapper")
+        await title_input.click()
+        await sleep(0.5)
+
+        limited_text = " ".join(text.split()[:5])
+        await pp_clear_input_field(self.page)
+        await pp_copy_paste(self.page, str(number) + limited_text)
+
+    async def click_generate_voice(self):
+        await self.page.evaluate(
+            'document.querySelector(".request-info > button").click();'
+        )
+        await sleep(0.5)
+
+    async def paste_text_into_editor(self, text):
+        content_editor = await self.page.waitForSelector(
+            ".DraftEditor-editorContainer > div > div"
+        )
+        await content_editor.click()
+        await sleep(0.5)
+
+        await pp_clear_input_field(self.page)
+        await pp_copy_paste(self.page, text)
 
 
 def main():
