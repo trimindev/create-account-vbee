@@ -146,13 +146,13 @@ class AutoVbee:
     async def setup_initial_sign_in(self):
         await self.close_initial_popups_on_sign_in()
 
-        await self.paste_text_into_editor("demo")
-        await self.click_generate_voice()
+        # await self.paste_text_into_editor("demo")
+        # await self.click_generate_voice()
 
-        await self.close_popup_during_generation()
-        await self.expand_download_tab()
-        await self.choose_all_voice()
-        await self.click_delete_all_voice()
+        # await self.close_popup_during_generation()
+        # await self.expand_download_tab()
+        # await self.choose_all_voice()
+        # await self.click_delete_all_voice()
 
         return
 
