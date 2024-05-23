@@ -76,7 +76,7 @@ class AutoVbee:
         await self.page.goto("https://studio.vbee.vn/studio/text-to-speech")
         await sleep(2)
 
-        await click_selector(self.page, ".mid\:block .bg-primary")
+        await click_selector(self.page, "#btn-try-for-free-banner")
 
     async def get_temp_mail(self):
         self.page = await goto_page_with_url_containing(
@@ -137,8 +137,8 @@ class AutoVbee:
         close_ad_btn = ".MuiDialogContent-root > button"
         await click_selector(self.page, close_ad_btn, 2, skip_timeout=True)
 
-        skip_enter_text_btn = ".button-back"
-        await click_selector(self.page, skip_enter_text_btn)
+        aivoice_studio_btn = ".other-product-box"
+        await click_selector(self.page, aivoice_studio_btn)
 
         skip_hightlight_to_listen_btn = ".ignore-text"
         await click_selector(self.page, skip_hightlight_to_listen_btn)
@@ -146,13 +146,13 @@ class AutoVbee:
     async def setup_initial_sign_in(self):
         await self.close_initial_popups_on_sign_in()
 
-        # await self.paste_text_into_editor("demo")
-        # await self.click_generate_voice()
+        await self.paste_text_into_editor("demo")
+        await self.click_generate_voice()
 
-        # await self.close_popup_during_generation()
-        # await self.expand_download_tab()
-        # await self.choose_all_voice()
-        # await self.click_delete_all_voice()
+        await self.close_popup_during_generation()
+        await self.expand_download_tab()
+        await self.choose_all_voice()
+        await self.click_delete_all_voice()
 
         return
 
