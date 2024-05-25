@@ -65,7 +65,7 @@ class AutoVbee:
         await set_auto_download_behavior(self.page, self.desc_path)
 
         await self.setup_initial_sign_in()
-        await self.setup_voice()
+        # await self.setup_voice()
 
     async def load_temp_mail_page(self):
         self.page = await self.browser.newPage()
@@ -73,7 +73,9 @@ class AutoVbee:
 
     async def navigate_to_vbee_sign_in(self):
         self.page = await self.browser.newPage()
-        await self.page.goto("https://studio.vbee.vn/studio/text-to-speech")
+        await self.page.goto(
+            "https://studio.vbee.vn/studio/text-to-speech", waitUntil="domcontentloaded"
+        )
         await sleep(2)
 
         await click_selector(self.page, "#btn-try-for-free-banner")
@@ -124,7 +126,7 @@ class AutoVbee:
 
         return vbee_confirm_link
 
-    async def close_initial_popups_on_sign_in(self):
+    async def setup_initial_sign_in(self):
         agree_btn = ".dialog-checkbox input"
         await click_selector(self.page, agree_btn)
 
@@ -140,28 +142,22 @@ class AutoVbee:
         aivoice_studio_btn = ".other-product-box"
         await click_selector(self.page, aivoice_studio_btn)
 
+        skip_demo_btn = '[data-action="skip"]'
+        await click_selector(self.page, skip_demo_btn)
+
         skip_hightlight_to_listen_btn = ".ignore-text"
         await click_selector(self.page, skip_hightlight_to_listen_btn)
 
-    async def setup_initial_sign_in(self):
-        await self.close_initial_popups_on_sign_in()
+        # await self.paste_text_into_editor("demo")
+        # await self.click_generate_voice()
 
-        await self.paste_text_into_editor("demo")
-        await self.click_generate_voice()
+        # await click_selector(self.page, ".dialog-content > h2 > button", 0.5)
 
-        await self.close_popup_during_generation()
-        await self.expand_download_tab()
-        await self.choose_all_voice()
-        await self.click_delete_all_voice()
+        # await self.expand_download_tab()
+        # await self.choose_all_voice()
+        # await self.click_delete_all_voice()
 
         return
-
-    async def close_popup_during_generation(self):
-        close_popup_btn = await self.page.waitForSelector(
-            ".dialog-content > h2 > button"
-        )
-        await close_popup_btn.click()
-        await sleep(0.5)
 
     async def setup_voice(self):
         # Click choose voice
@@ -185,7 +181,7 @@ class AutoVbee:
         # Adjust speed
         speed_input = await self.page.waitForSelector("[id='mui-8']")
         await speed_input.click()
-        await speed_input.type("1.1")
+        await speed_input.type("1.15")
         await self.page.keyboard.press("Enter")
         await sleep(0.5)
 
